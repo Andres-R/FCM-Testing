@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fcm_testing/data/data_repository.dart';
+import 'package:fcm_testing/service/local_notifications_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,8 +9,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
-  // final fcmToken = await FirebaseMessaging.instance.getToken();
-  // print(fcmToken);
   runApp(const MyApp());
 }
 
@@ -21,14 +20,27 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final LocalNotificationService service;
   DataRepositroy dr = DataRepositroy();
   String userID = 'Kt1NA4Bk59jQfkD7OlvT';
 
   @override
   void initState() {
     super.initState();
+    service = LocalNotificationService();
+    listenToNotification();
+    service.initialize();
     requestPermission();
     getToken();
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen(onNotificationListener);
+
+  void onNotificationListener(String? payload) {
+    if (payload != null && payload.isNotEmpty) {
+      //Navigator.of(context).pushNamed('');
+    }
   }
 
   void getToken() async {
@@ -103,6 +115,38 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
             ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     await service.showNotification(
+            //       id: 0,
+            //       title: 'Notification Title',
+            //       body: 'Some body',
+            //     );
+            //   },
+            //   child: const Text('Show local notification'),
+            // ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     await service.showScheduledNotification(
+            //       id: 0,
+            //       title: 'Noti Title',
+            //       body: 'Some random strings',
+            //       seconds: 3,
+            //     );
+            //   },
+            //   child: const Text('Show scheduled notification'),
+            // ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     await service.showNotificationWithPayload(
+            //       id: 0,
+            //       title: 'Notification Title',
+            //       body: 'Some body',
+            //       payload: 'Payload navigation',
+            //     );
+            //   },
+            //   child: const Text('Show notification with payload'),
+            // ),
           ],
         ),
       ),
