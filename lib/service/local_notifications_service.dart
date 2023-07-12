@@ -14,7 +14,7 @@ class LocalNotificationService {
     tz.initializeTimeZones();
 
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@drawable/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_stat_account_box');
 
     IOSInitializationSettings iosInitializationSettings =
         IOSInitializationSettings(

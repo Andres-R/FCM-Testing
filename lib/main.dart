@@ -5,10 +5,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Handling a background message ${message.notification?.body}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 
@@ -20,9 +25,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late final LocalNotificationService service;
+  late LocalNotificationService service;
   DataRepositroy dr = DataRepositroy();
+  // andres
   String userID = 'Kt1NA4Bk59jQfkD7OlvT';
+  // andy
+  // String userID = 'tz5bgAC7IHdO8CIlkT3M';
+  // bobby
+  // String userID = 'tMQXkqs4BuPxO8UzLScj';
 
   @override
   void initState() {
@@ -32,6 +42,7 @@ class _MyAppState extends State<MyApp> {
     service.initialize();
     requestPermission();
     getToken();
+    initInfo();
   }
 
   void listenToNotification() =>
@@ -41,6 +52,24 @@ class _MyAppState extends State<MyApp> {
     if (payload != null && payload.isNotEmpty) {
       //Navigator.of(context).pushNamed('');
     }
+  }
+
+  void initInfo() {
+    print('init start');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      print('.....onMessage.....');
+      String? title = message.notification?.title;
+      String? body = message.notification?.body;
+      print('onMessage title: $title -- ');
+      print('onMessage body: $body');
+      service.showNotificationWithPayload(
+        id: 0,
+        title: 'title!',
+        body: 'body!',
+        payload: 'message.data[' ']',
+      );
+    });
+    print('init end');
   }
 
   void getToken() async {
@@ -55,6 +84,7 @@ class _MyAppState extends State<MyApp> {
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
+      badge: true,
       carPlay: false,
       criticalAlert: false,
       provisional: false,
@@ -93,7 +123,7 @@ class _MyAppState extends State<MyApp> {
               child: GestureDetector(
                 onTap: () async {
                   //await dr.createUser('Andres', 'Rogers', 'zoski@gmail.com', '123123');
-                  //await dr.addNotificationSetting('Cardano', 'ADA', 'DOWN', -5, userID, 'screen2');
+                  //await dr.addNotificationSetting('Ethereum', 'ETH', 'UP', 7.5, userID, 'screen4');
 
                   print('db write written successfully');
                 },
